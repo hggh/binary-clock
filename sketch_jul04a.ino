@@ -17,7 +17,7 @@ struct tmDHT22_t {
 tmDHT22_t readDHT22Sensor();
 
 #define LED_CLOCK_COUNT 20   // all LEDs
-#define LED_CLOCK_PIN  13    // digital data pin
+#define LED_CLOCK_PIN  9     // digital data pin
 #define DHT22_PIN 6          // Digital PIN
 #define DCF_PIN 2            // Digital Pin Connection pin to DCF 77 device
 #define DCF_INTERRUPT 0      // Interrupt number associated with pin
@@ -107,6 +107,24 @@ time_t rtc_get_time() {
   return makeTime(tm);
 }
 
+/*
+ * some nice loopings
+ */
+void leds_do_looping() {
+  for (int i = 0; i < 10; i++) {
+    for (int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
+      clock_leds[dot] = CRGB::Blue;
+      FastLED.show();
+      clock_leds[dot] = CRGB::Red;
+      delay(30);
+    }
+    for (int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
+      clock_leds[dot] = CRGB::Black;
+    }
+    FastLED.show();
+  }
+}
+
 
 
 /*
@@ -136,6 +154,7 @@ void setup() {
 
   FastLED.addLeds<NEOPIXEL, LED_CLOCK_PIN>(clock_leds, LED_CLOCK_COUNT);
   FastLED.setBrightness(15);
+  leds_do_looping();
   
   Serial.println("Starting program, fetching now time from DCF77...");
 
@@ -150,21 +169,11 @@ void setup() {
    */
   while(DCFtime == 0) {
     Serial.println("Waiting for Time...");
-    for(int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
-      clock_leds[dot] = CRGB::Blue;
-      FastLED.show();
-      clock_leds[dot] = CRGB::Red;
-      delay(20);
-    }
     delay(200);
     DCFtime = DCF.getTime();
   }
-  for(int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
-    clock_leds[dot] = CRGB::Black;
-  }
-  FastLED.show();
-  
   rtc_set_time(DCFtime);
+  leds_do_looping();
 
  /*
   rtc.set(
