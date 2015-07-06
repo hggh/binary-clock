@@ -21,6 +21,7 @@ tmDHT22_t readDHT22Sensor();
 #define DHT22_PIN 6          // Digital PIN
 #define DCF_PIN 2            // Digital Pin Connection pin to DCF 77 device
 #define DCF_INTERRUPT 0      // Interrupt number associated with pin
+#define BUTTON_LCD_OFF A3    // click button to on/off display
 
 RV8523 rtc;
 DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);
@@ -203,6 +204,12 @@ void setup() {
  * Main Loop
  */
 void loop() {
+   if (analogRead(BUTTON_LCD_OFF) > 600) {
+    lcd.display();
+   }
+   else {
+    lcd.noDisplay();
+   }
   // check if one second is gone, we need to update the LEDs
   time_t time_current = rtc_get_time();
   if (time_old != time_current) {
@@ -210,7 +217,7 @@ void loop() {
     Serial.print("Time: ");
     Serial.println(time_current);
 
-    // Get DHT Values every 60sec
+    // Get DHT Values every 10sec
     if ( ((dht_last_read) < time_current - 10) || dht_last_read == 0) {
       dht_last_read = time_current;
       dht22_current = readDHT22Sensor();
