@@ -4,7 +4,7 @@
 #include "FastLED.h"
 #include <Wire.h><
 #include <RV8523.h>
-#include <DHT.h>
+#include <dht.h>
 #include <LiquidCrystal.h>
 
 /*
@@ -24,7 +24,7 @@ tmDHT22_t readDHT22Sensor();
 
 RV8523 rtc;
 DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);
-DHT dht(DHT22_PIN, DHT22);
+dht DHT;
 LiquidCrystal lcd(12, 11, 10, 5, 4, 3, 7);
 CRGB clock_leds[LED_CLOCK_COUNT];
 
@@ -33,8 +33,19 @@ CRGB clock_leds[LED_CLOCK_COUNT];
  */
 struct tmDHT22_t readDHT22Sensor() {
   tmDHT22_t data;
-  data.humidity = dht.readHumidity();
-  data.temperature = dht.readTemperature();
+  int chk = DHT.read22(DHT22_PIN);
+  if (chk != DHTLIB_OK) {
+    for (int i = 0; i > 2; i++) {
+      delay(60);
+      chk = DHT.read22(DHT22_PIN);
+      if (chk == DHTLIB_OK) {
+        break;
+      }
+    }
+  }
+  data.humidity = DHT.humidity;
+  data.temperature = DHT.temperature;
+
   return data;
 }
 
@@ -160,7 +171,7 @@ void setup() {
 
   rtc.set24HourMode();
   rtc.batterySwitchOverOff();
-  dht.begin();
+
   DCF.Start();
   delay(100);
   dht22_current = readDHT22Sensor();
