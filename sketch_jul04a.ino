@@ -16,7 +16,7 @@ struct tmDHT22_t {
 };
 tmDHT22_t readDHT22Sensor();
 
-#define LED_CLOCK_COUNT 20   // all LEDs
+#define LED_CLOCK_COUNT 26   // all LEDs
 #define LED_CLOCK_PIN  9     // digital data pin
 #define DHT22_PIN 6          // Digital PIN
 #define DCF_PIN 2            // Digital Pin Connection pin to DCF 77 device
@@ -120,19 +120,26 @@ time_t rtc_get_time() {
 }
 
 /*
+ * Clear LEDs
+ */
+void leds_clock_clear() {
+  for (int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
+    clock_leds[dot] = CRGB::Black;
+  }
+}
+
+/*
  * some nice loopings
  */
 void leds_do_looping() {
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 4; i++) {
     for (int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
       clock_leds[dot] = CRGB::Blue;
       FastLED.show();
       clock_leds[dot] = CRGB::Red;
-      delay(30);
+      delay(10);
     }
-    for (int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
-      clock_leds[dot] = CRGB::Black;
-    }
+    leds_clock_clear();
     FastLED.show();
   }
 }
@@ -165,7 +172,7 @@ void setup() {
   lcd.print("takes 2-5min");
 
   FastLED.addLeds<NEOPIXEL, LED_CLOCK_PIN>(clock_leds, LED_CLOCK_COUNT);
-  FastLED.setBrightness(15);
+  FastLED.setBrightness(30);
   leds_do_looping();
   
   Serial.println("Starting program, fetching now time from DCF77...");
@@ -177,8 +184,6 @@ void setup() {
   delay(100);
   dht22_current = readDHT22Sensor();
 
-  /* debug nicht warten auf DCF77
-   */
   while(DCFtime == 0) {
     Serial.println("Waiting for Time...");
     delay(200);
@@ -200,6 +205,28 @@ void setup() {
   */
 }
 
+void write_time(int offset_first, int offset_second, int number) {
+  // split the numer if the first and second
+  int t_first = ((number / 10 ) % 10);
+  int t_second = (number % 10 );
+  byte bt_first = t_first;
+  byte bt_second = t_second;
+
+  for (int i=0; i<4; i++) {
+    if (bitRead(bt_first, i) == 1) {
+      clock_leds[offset_first + i * 2]       = CRGB::Red;
+      clock_leds[offset_first + (i * 2) + 1] = CRGB::Red;
+    }
+  }
+
+  for (int i=0; i<4; i++) {
+    if (bitRead(bt_second, i) == 1) {
+      clock_leds[offset_second + i * 2 ]     = CRGB::Red;
+      clock_leds[offset_second + i * 2 + 1]  = CRGB::Red;
+    }
+  }
+}
+
 /*
  * Main Loop
  */
@@ -213,17 +240,25 @@ void loop() {
   // check if one second is gone, we need to update the LEDs
   time_t time_current = rtc_get_time();
   if (time_old != time_current) {
+    leds_clock_clear();
     time_old = time_current;
     Serial.print("Time: ");
     Serial.println(time_current);
 
-    // Get DHT Values every 10sec
-    if ( ((dht_last_read) < time_current - 10) || dht_last_read == 0) {
+    int seconds = second(time_current);
+
+    write_time( 0,  4, hour(time_current));
+    write_time(12, 18, minute(time_current));
+    // write LEDs....
+    FastLED.show();
+    display_values(time_current, dht22_current);
+
+    // Get DHT Values every 60sec
+    if ( ((dht_last_read) < time_current - 60) || dht_last_read == 0) {
       dht_last_read = time_current;
       dht22_current = readDHT22Sensor();
       Serial.print("Temp:");
       Serial.println(dht22_current.temperature);
-      display_values(time_current, dht22_current);
     }
   }
 }
