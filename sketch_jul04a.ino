@@ -152,6 +152,7 @@ void leds_do_looping() {
 time_t time_old;
 tmDHT22_t dht22_current;
 time_t dht_last_read = 0;
+uint8_t led_brightness = 30;
 
 
 /*
@@ -172,7 +173,7 @@ void setup() {
   lcd.print("takes 2-5min");
 
   FastLED.addLeds<NEOPIXEL, LED_CLOCK_PIN>(clock_leds, LED_CLOCK_COUNT);
-  FastLED.setBrightness(30);
+  FastLED.setBrightness(led_brightness);
   leds_do_looping();
   
   Serial.println("Starting program, fetching now time from DCF77...");
@@ -212,11 +213,18 @@ void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
   byte bt_first = t_first;
   byte bt_second = t_second;
 
-  // nscale8 brightness
   for (uint8_t i=0; i<4; i++) {
     if (bitRead(bt_first, i) == 1) {
       clock_leds[offset_first + i * 2]       = CRGB::Red;
       clock_leds[offset_first + (i * 2) + 1] = CRGB::Red;
+      clock_leds[offset_first + i * 2].nscale8(255);
+      clock_leds[offset_first + (i * 2) + 1].nscale8(255);
+    }
+    else {
+      clock_leds[offset_first + i * 2]       = CRGB::Grey;
+      clock_leds[offset_first + (i * 2) + 1] = CRGB::Grey;
+      clock_leds[offset_first + i * 2].nscale8(20);
+      clock_leds[offset_first + (i * 2) + 1].nscale8(20);
     }
   }
 
@@ -224,6 +232,14 @@ void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
     if (bitRead(bt_second, i) == 1) {
       clock_leds[offset_second + i * 2 ]     = CRGB::Red;
       clock_leds[offset_second + i * 2 + 1]  = CRGB::Red;
+      clock_leds[offset_second + i * 2 ].nscale8(255);
+      clock_leds[offset_second + i * 2 + 1].nscale8(255);
+    }
+    else {
+      clock_leds[offset_second + i * 2 ]     = CRGB::Grey;
+      clock_leds[offset_second + i * 2 + 1]  = CRGB::Grey;
+      clock_leds[offset_second + i * 2 ].nscale8(20);
+      clock_leds[offset_second + i * 2 + 1].nscale8(20);
     }
   }
 }
