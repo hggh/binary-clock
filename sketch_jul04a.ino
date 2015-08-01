@@ -132,8 +132,8 @@ void leds_clock_clear() {
  * some nice loopings
  */
 void leds_do_looping() {
-  for (int i = 0; i < 4; i++) {
-    for (int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
+  for (uint8_t i = 0; i < 4; i++) {
+    for (uint8_t dot = 0; dot < LED_CLOCK_COUNT; dot++) {
       clock_leds[dot] = CRGB::Blue;
       FastLED.show();
       clock_leds[dot] = CRGB::Red;
@@ -205,22 +205,22 @@ void setup() {
   */
 }
 
-void write_time(int offset_first, int offset_second, int number) {
+void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
   // split the numer if the first and second
-  int t_first = ((number / 10 ) % 10);
-  int t_second = (number % 10 );
+  uint8_t t_first = ((number / 10 ) % 10);
+  uint8_t t_second = (number % 10 );
   byte bt_first = t_first;
   byte bt_second = t_second;
 
   // nscale8 brightness
-  for (int i=0; i<4; i++) {
+  for (uint8_t i=0; i<4; i++) {
     if (bitRead(bt_first, i) == 1) {
       clock_leds[offset_first + i * 2]       = CRGB::Red;
       clock_leds[offset_first + (i * 2) + 1] = CRGB::Red;
     }
   }
 
-  for (int i=0; i<4; i++) {
+  for (uint8_t i=0; i<4; i++) {
     if (bitRead(bt_second, i) == 1) {
       clock_leds[offset_second + i * 2 ]     = CRGB::Red;
       clock_leds[offset_second + i * 2 + 1]  = CRGB::Red;
@@ -245,8 +245,6 @@ void loop() {
     time_old = time_current;
     Serial.print("Time: ");
     Serial.println(time_current);
-
-    int seconds = second(time_current);
 
     write_time( 0,  4, hour(time_current));
     write_time(12, 18, minute(time_current));
