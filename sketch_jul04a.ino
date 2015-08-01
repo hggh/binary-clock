@@ -16,7 +16,7 @@ struct tmDHT22_t {
 };
 tmDHT22_t readDHT22Sensor();
 
-#define LED_CLOCK_COUNT 26   // all LEDs
+#define LED_CLOCK_COUNT 40   // all LEDs
 #define LED_CLOCK_PIN  9     // digital data pin
 #define DHT22_PIN 6          // Digital PIN
 #define DCF_PIN 2            // Digital Pin Connection pin to DCF 77 device
@@ -212,6 +212,7 @@ void write_time(int offset_first, int offset_second, int number) {
   byte bt_first = t_first;
   byte bt_second = t_second;
 
+  // nscale8 brightness
   for (int i=0; i<4; i++) {
     if (bitRead(bt_first, i) == 1) {
       clock_leds[offset_first + i * 2]       = CRGB::Red;
@@ -249,6 +250,7 @@ void loop() {
 
     write_time( 0,  4, hour(time_current));
     write_time(12, 18, minute(time_current));
+    write_time(26, 32, second(time_current));
     // write LEDs....
     FastLED.show();
     display_values(time_current, dht22_current);
