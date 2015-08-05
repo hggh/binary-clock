@@ -4,85 +4,15 @@
 #include "FastLED.h"
 #include <Wire.h><
 #include <RV8523.h>
-#include <dht.h>
-#include <LiquidCrystal.h>
-
-/*
- * define custom struct for handle DHT22 values
- */
-struct tmDHT22_t {
-  float humidity;
-  float temperature;
-};
-tmDHT22_t readDHT22Sensor();
 
 #define LED_CLOCK_COUNT 40   // all LEDs
 #define LED_CLOCK_PIN  9     // digital data pin
-#define DHT22_PIN 6          // Digital PIN
 #define DCF_PIN 2            // Digital Pin Connection pin to DCF 77 device
 #define DCF_INTERRUPT 0      // Interrupt number associated with pin
-#define BUTTON_LCD_OFF A3    // click button to on/off display
 
 RV8523 rtc;
 DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);
-dht DHT;
-LiquidCrystal lcd(12, 11, 10, 5, 4, 3, 7);
 CRGB clock_leds[LED_CLOCK_COUNT];
-
-/*
- * Read the DHT22 return the struct with floats inside
- */
-struct tmDHT22_t readDHT22Sensor() {
-  tmDHT22_t data;
-  int chk = DHT.read22(DHT22_PIN);
-  if (chk != DHTLIB_OK) {
-    for (int i = 0; i > 2; i++) {
-      delay(60);
-      chk = DHT.read22(DHT22_PIN);
-      if (chk == DHTLIB_OK) {
-        break;
-      }
-    }
-  }
-  data.humidity = DHT.humidity;
-  data.temperature = DHT.temperature;
-
-  return data;
-}
-
-/*
- * Display temperature
- */
-void display_values(time_t current_time, tmDHT22_t data) {
-  lcd.clear();
-  lcd.setCursor(0,0);
-  
-  
-  char buffer[40];
-  sprintf(buffer, "%d.%d.%4d - %02d:%02d:%02d",
-      day(current_time),
-      month(current_time),
-      year(current_time),
-      hour(current_time),
-      minute(current_time),
-      second(current_time)
-  );
-  lcd.print(buffer);
-  lcd.setCursor(0,2);
-  lcd.print("Temp.: ");
-  lcd.setCursor(11,2);
-  lcd.print(data.temperature);
-  lcd.setCursor(17,2);
-  lcd.print("C");
-
-  lcd.setCursor(0,3);
-  lcd.print("Humidity: ");
-  lcd.setCursor(11,3);
-  lcd.print(data.humidity);
-  lcd.setCursor(17,3);
-  lcd.print("%");
-}
-
 
 /*
  * Set the RTC timer from the time_t struct
@@ -150,27 +80,15 @@ void leds_do_looping() {
  * Global variables for Loop
  */
 time_t time_old;
-tmDHT22_t dht22_current;
-time_t dht_last_read = 0;
 uint8_t led_brightness = 30;
 
 
 /*
- * Setup RTC, DCF77, DHT22
+ * Setup RTC, DCF77
  */
 void setup() {
   time_t DCFtime = 0;
   Serial.begin(9600);
-
-  lcd.begin(20, 4);
-  lcd.noCursor();
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Starting the clock...");
-  lcd.setCursor(0,1);
-  lcd.print("getting radio signal...");
-  lcd.setCursor(0,2);
-  lcd.print("takes 2-5min");
 
   FastLED.addLeds<NEOPIXEL, LED_CLOCK_PIN>(clock_leds, LED_CLOCK_COUNT);
   FastLED.setBrightness(led_brightness);
@@ -183,7 +101,6 @@ void setup() {
 
   DCF.Start();
   delay(100);
-  dht22_current = readDHT22Sensor();
 
   while(DCFtime == 0) {
     Serial.println("Waiting for Time...");
@@ -248,12 +165,6 @@ void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
  * Main Loop
  */
 void loop() {
-   if (analogRead(BUTTON_LCD_OFF) > 600) {
-    lcd.display();
-   }
-   else {
-    lcd.noDisplay();
-   }
   // check if one second is gone, we need to update the LEDs
   time_t time_current = rtc_get_time();
   if (time_old != time_current) {
@@ -267,14 +178,5 @@ void loop() {
     write_time(26, 32, second(time_current));
     // write LEDs....
     FastLED.show();
-    display_values(time_current, dht22_current);
-
-    // Get DHT Values every 60sec
-    if ( ((dht_last_read) < time_current - 60) || dht_last_read == 0) {
-      dht_last_read = time_current;
-      dht22_current = readDHT22Sensor();
-      Serial.print("Temp:");
-      Serial.println(dht22_current.temperature);
-    }
   }
 }
