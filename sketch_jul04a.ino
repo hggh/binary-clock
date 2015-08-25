@@ -1,3 +1,7 @@
+/*
+ * Copyright: 2015 Jonas Genannt <genannt@debian.org>
+ * License:   GPLv2
+ */
 #include <RV8523.h>
 #include "DCF77.h"
 #include "Time.h"
