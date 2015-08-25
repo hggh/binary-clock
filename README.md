@@ -1,4 +1,4 @@
-# arduino-clock
+# Arduino - binary clock (BCD) with WS2812B
 
 binary clock with WS2812B LEDs
 
