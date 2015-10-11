@@ -11,6 +11,7 @@
 
 #define LED_CLOCK_COUNT 40   // all LEDs
 #define BUTTON_PIN     3     // digital PIN with interrupt
+#define BUTTON_MODE_PIN 2     // Analog Button Mode
 #define LED_CLOCK_PIN  9     // digital data pin
 #define DCF_PIN 2            // Digital Pin Connection pin to DCF 77 device
 #define DCF_INTERRUPT 0      // Interrupt number associated with pin
@@ -28,7 +29,7 @@ CRGB::LightSeaGreen,CRGB::Teal,CRGB::Cyan,CRGB::CadetBlue,CRGB::SteelBlue,CRGB::
  */
 time_t time_old;
 uint8_t led_brightness = 255;
-uint8_t led_color_brightness = 50;
+uint8_t led_color_brightness = 80;
 uint8_t led_color_index = 0;
 boolean buttonMode = 0;
 CRGB::HTMLColorCode led_color = CRGB::DarkBlue;
@@ -101,6 +102,8 @@ void setup() {
   time_t DCFtime = 0;
   Serial.begin(9600);
   pinMode(BUTTON_PIN, INPUT);
+  pinMode(A2, INPUT);
+
   attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), action_button, RISING);
 
   FastLED.addLeds<NEOPIXEL, LED_CLOCK_PIN>(clock_leds, LED_CLOCK_COUNT);
@@ -114,7 +117,7 @@ void setup() {
 
   DCF.Start();
   delay(100);
-/*
+
   while(DCFtime == 0) {
     Serial.println("Waiting for Time...");
     delay(200);
@@ -122,8 +125,8 @@ void setup() {
   }
   rtc_set_time(DCFtime);
   leds_do_looping();
-*/
-  
+
+  /*
   rtc.set(
     0,
     33,
@@ -133,7 +136,7 @@ void setup() {
     2014
   );
   rtc.start();
-  
+  */
 }
 
 void action_button() {
@@ -198,6 +201,13 @@ void loop() {
   // check if one second is gone, we need to update the LEDs
   time_t time_current = rtc_get_time();
   if (time_old != time_current) {
+    int a_button = analogRead(BUTTON_MODE_PIN);
+    if (a_button > 10) {
+      buttonMode = 1;
+    }
+    else {
+      buttonMode = 0;
+    }
     leds_clock_clear();
     time_old = time_current;
     Serial.print("Time: ");
