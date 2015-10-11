@@ -10,6 +10,7 @@
 #include <RV8523.h>
 
 #define LED_CLOCK_COUNT 40   // all LEDs
+#define BUTTON_PIN     3     // digital PIN with interrupt
 #define LED_CLOCK_PIN  9     // digital data pin
 #define DCF_PIN 2            // Digital Pin Connection pin to DCF 77 device
 #define DCF_INTERRUPT 0      // Interrupt number associated with pin
@@ -17,6 +18,20 @@
 RV8523 rtc;
 DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);
 CRGB clock_leds[LED_CLOCK_COUNT];
+
+const CRGB::HTMLColorCode colors[35] = { CRGB::Crimson,CRGB::Red,CRGB::DarkRed,CRGB::DeepPink,CRGB::OrangeRed,CRGB::Orange,CRGB::Gold,CRGB::Yellow,CRGB::Violet,CRGB::Navy,CRGB::RosyBrown,
+CRGB::Fuchsia,CRGB::MediumOrchid,CRGB::BlueViolet,CRGB::Purple,CRGB::Indigo,CRGB::DarkSlateBlue,CRGB::GreenYellow,CRGB::Lime,CRGB::MediumSpringGreen,CRGB::ForestGreen,CRGB::DarkGreen,
+CRGB::LightSeaGreen,CRGB::Teal,CRGB::Cyan,CRGB::CadetBlue,CRGB::SteelBlue,CRGB::SkyBlue,CRGB::Blue,CRGB::DarkBlue,CRGB::Chocolate,CRGB::SaddleBrown,CRGB::Maroon,CRGB::DarkSlateGray,CRGB::Brown };
+
+/*
+ * Global variables for Loop
+ */
+time_t time_old;
+uint8_t led_brightness = 255;
+uint8_t led_color_brightness = 50;
+uint8_t led_color_index = 0;
+boolean buttonMode = 0;
+CRGB::HTMLColorCode led_color = CRGB::DarkBlue;
 
 /*
  * Set the RTC timer from the time_t struct
@@ -79,20 +94,14 @@ void leds_do_looping() {
 }
 
 
-
-/*
- * Global variables for Loop
- */
-time_t time_old;
-uint8_t led_brightness = 30;
-
-
 /*
  * Setup RTC, DCF77
  */
 void setup() {
   time_t DCFtime = 0;
   Serial.begin(9600);
+  pinMode(BUTTON_PIN, INPUT);
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), action_button, RISING);
 
   FastLED.addLeds<NEOPIXEL, LED_CLOCK_PIN>(clock_leds, LED_CLOCK_COUNT);
   FastLED.setBrightness(led_brightness);
@@ -105,7 +114,7 @@ void setup() {
 
   DCF.Start();
   delay(100);
-
+/*
   while(DCFtime == 0) {
     Serial.println("Waiting for Time...");
     delay(200);
@@ -113,8 +122,8 @@ void setup() {
   }
   rtc_set_time(DCFtime);
   leds_do_looping();
-
- /*
+*/
+  
   rtc.set(
     0,
     33,
@@ -124,7 +133,24 @@ void setup() {
     2014
   );
   rtc.start();
-  */
+  
+}
+
+void action_button() {
+  if (buttonMode == 1) {
+    led_color_brightness+=5;
+    Serial.print("Light: ");
+    Serial.println(led_color_brightness);
+  }
+  else {
+    led_color_index++;
+    if (led_color_index >34) {
+      led_color_index = 0;
+    }
+    led_color = colors[led_color_index];
+    Serial.print("Color: ");
+    Serial.println(led_color);
+  }
 }
 
 void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
@@ -136,10 +162,10 @@ void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
 
   for (uint8_t i=0; i<4; i++) {
     if (bitRead(bt_first, i) == 1) {
-      clock_leds[offset_first + i * 2]       = CRGB::Red;
-      clock_leds[offset_first + (i * 2) + 1] = CRGB::Red;
-      clock_leds[offset_first + i * 2].nscale8(255);
-      clock_leds[offset_first + (i * 2) + 1].nscale8(255);
+      clock_leds[offset_first + i * 2]       = led_color;
+      clock_leds[offset_first + (i * 2) + 1] = led_color;
+      clock_leds[offset_first + i * 2].nscale8(led_color_brightness);
+      clock_leds[offset_first + (i * 2) + 1].nscale8(led_color_brightness);
     }
     else {
       clock_leds[offset_first + i * 2]       = CRGB::Grey;
@@ -151,10 +177,10 @@ void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
 
   for (uint8_t i=0; i<4; i++) {
     if (bitRead(bt_second, i) == 1) {
-      clock_leds[offset_second + i * 2 ]     = CRGB::Red;
-      clock_leds[offset_second + i * 2 + 1]  = CRGB::Red;
-      clock_leds[offset_second + i * 2 ].nscale8(255);
-      clock_leds[offset_second + i * 2 + 1].nscale8(255);
+      clock_leds[offset_second + i * 2 ]     = led_color;
+      clock_leds[offset_second + i * 2 + 1]  = led_color;
+      clock_leds[offset_second + i * 2 ].nscale8(led_color_brightness);
+      clock_leds[offset_second + i * 2 + 1].nscale8(led_color_brightness);
     }
     else {
       clock_leds[offset_second + i * 2 ]     = CRGB::Grey;
