@@ -1,10 +1,15 @@
 # Arduino - binary clock (BCD) with WS2812B
 
-binary clock with WS2812B LEDs
+Binary Clock mit WS2812b LED strips
 
-## stuff
+## Bauteile
 
- * WS2812b
- * RTC module
- * DCF77
+ * Schwarzes festes Papier (Pappe) Lichtstreifen
+ * Ikea Ribba Rahmen, 50x50cm
+ * Plexiglas 49% Lichtdurchlässigkeit 50x50cm 2mm
+ * schwarze Klebefolie
+ * Arduino (Uno oder Nano)
+ * 40x WS2812b LEDs (Stips 60 LEDs/m)
+ * RTC Modul
+ * DCF77 Modul
 
