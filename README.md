@@ -16,7 +16,7 @@ Binary Clock mit WS2812b LED strips
 
 ## Weitere Bilder vom Bau
 
-[Link Text](Pics.md)
+[Weitere Bilder](Pics.md)
 
 ## Bild
 
