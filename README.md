@@ -14,7 +14,11 @@ Binary Clock mit WS2812b LED strips
  * DCF77 Modul
 
 
+## Weitere Bilder vom Bau
+
+[Link Text](Pics.md)
 
 ## Bild
+
 
 ![Fertige-Lampe.jpg](https://raw.githubusercontent.com/hggh/arduino-clock/master/pics/Fertige-Lampe.jpg)
