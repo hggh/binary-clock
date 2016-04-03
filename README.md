@@ -6,7 +6,7 @@ Binary Clock mit WS2812b LED strips
 
  * Schwarzes festes Papier (Pappe) Lichtstreifen
  * Ikea Ribba Rahmen, 50x50cm
- * Plexiglas 49% Lichtdurchlässigkeit 50x50cm 2mm
+ * Plexiglas 45% Lichtdurchlässigkeit 50x50cm 2mm
  * schwarze Klebefolie
  * Arduino (Uno oder Nano)
  * 40x WS2812b LEDs (Stips 60 LEDs/m)
