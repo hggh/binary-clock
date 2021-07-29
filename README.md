@@ -14,6 +14,14 @@ Binary Clock mit WS2812b LED strips
  * DCF77 Modul
 
 
+## Hardware
+
+ * connect color change button to GND and digital pin 6
+ * connect led brightness button to GND and digital pin 5
+ * connect WS2812b Data In to digital pin 9
+ * connect RV8523 RTC to A4(SDA) and A5(SCL)
+ * connect DCF77 module to digital pin 2 and digital pin 0
+
 ## Weitere Bilder vom Bau
 
 [Weitere Bilder](Pics.md)

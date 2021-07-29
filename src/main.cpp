@@ -1,24 +1,27 @@
-/*
- * Copyright: 2015 Jonas Genannt <genannt@debian.org>
- * License:   GPLv2
- */
+#include <Arduino.h>
+#include <TimeLib.h>
+#include <Wire.h>
+
 #include <RV8523.h>
-#include "DCF77.h"
-#include "Time.h"
-#include "FastLED.h"
-#include <Wire.h><
-#include <RV8523.h>
+#include <FastLED.h>
+#include <Bounce2.h>
+#include <DCF77.h>
+
+//#define HAS_DCF77
 
 #define LED_CLOCK_COUNT 40   // all LEDs
-#define BUTTON_PIN     3     // digital PIN with interrupt
-#define BUTTON_MODE_PIN 2     // Analog Button Mode
+#define BUTTON_BRIGHTNESS 5 // digital pin 5
+#define BUTTON_COLOR 6 // digital pin 6
 #define LED_CLOCK_PIN  9     // digital data pin
 #define DCF_PIN 2            // Digital Pin Connection pin to DCF 77 device
 #define DCF_INTERRUPT 0      // Interrupt number associated with pin
 
+DCF77 DCF = DCF77(DCF_PIN, DCF_INTERRUPT);
 RV8523 rtc;
-DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);
 CRGB clock_leds[LED_CLOCK_COUNT];
+
+Bounce2::Button button_brightness = Bounce2::Button();
+Bounce2::Button button_color = Bounce2::Button();
 
 const CRGB::HTMLColorCode colors[35] = { CRGB::Crimson,CRGB::Red,CRGB::DarkRed,CRGB::DeepPink,CRGB::OrangeRed,CRGB::Orange,CRGB::Gold,CRGB::Yellow,CRGB::Violet,CRGB::Navy,CRGB::RosyBrown,
 CRGB::Fuchsia,CRGB::MediumOrchid,CRGB::BlueViolet,CRGB::Purple,CRGB::Indigo,CRGB::DarkSlateBlue,CRGB::GreenYellow,CRGB::Lime,CRGB::MediumSpringGreen,CRGB::ForestGreen,CRGB::DarkGreen,
@@ -31,7 +34,7 @@ time_t time_old;
 uint8_t led_brightness = 255;
 uint8_t led_color_brightness = 80;
 uint8_t led_color_index = 0;
-boolean buttonMode = 0;
+boolean update_leds = false;
 CRGB::HTMLColorCode led_color = CRGB::DarkBlue;
 
 /*
@@ -70,15 +73,6 @@ time_t rtc_get_time() {
 }
 
 /*
- * Clear LEDs
- */
-void leds_clock_clear() {
-  for (int dot = 0; dot < LED_CLOCK_COUNT; dot++) {
-    clock_leds[dot] = CRGB::Black;
-  }
-}
-
-/*
  * some nice loopings
  */
 void leds_do_looping() {
@@ -89,22 +83,22 @@ void leds_do_looping() {
       clock_leds[dot] = CRGB::Red;
       delay(10);
     }
-    leds_clock_clear();
+    FastLED.clear();
     FastLED.show();
   }
 }
 
-
-/*
- * Setup RTC, DCF77
- */
 void setup() {
   time_t DCFtime = 0;
   Serial.begin(9600);
-  pinMode(BUTTON_PIN, INPUT);
-  pinMode(A2, INPUT);
 
-  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), action_button, RISING);
+  button_brightness.attach(BUTTON_BRIGHTNESS, INPUT_PULLUP);
+  button_brightness.interval(25);
+  button_brightness.setPressedState(LOW);
+
+  button_color.attach(BUTTON_COLOR, INPUT_PULLUP);
+  button_color.interval(25);
+  button_color.setPressedState(LOW);
 
   FastLED.addLeds<NEOPIXEL, LED_CLOCK_PIN>(clock_leds, LED_CLOCK_COUNT);
   FastLED.setBrightness(led_brightness);
@@ -113,7 +107,9 @@ void setup() {
   Serial.println("Starting program, fetching now time from DCF77...");
 
   rtc.set24HourMode();
-  rtc.batterySwitchOverOff();
+
+  // my RTC module has no battery, we get the time every startup from DCF77
+  rtc.batterySwitchOver(0);
 
   DCF.Start();
   delay(100);
@@ -137,23 +133,6 @@ void setup() {
   );
   rtc.start();
   */
-}
-
-void action_button() {
-  if (buttonMode == 1) {
-    led_color_brightness+=5;
-    Serial.print("Light: ");
-    Serial.println(led_color_brightness);
-  }
-  else {
-    led_color_index++;
-    if (led_color_index >34) {
-      led_color_index = 0;
-    }
-    led_color = colors[led_color_index];
-    Serial.print("Color: ");
-    Serial.println(led_color);
-  }
 }
 
 void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
@@ -194,21 +173,36 @@ void write_time(uint8_t offset_first, uint8_t offset_second, uint8_t number) {
   }
 }
 
-/*
- * Main Loop
- */
 void loop() {
+  button_brightness.update();
+  button_color.update();
+
+  if (button_brightness.pressed()) {
+    update_leds = true;
+
+    led_color_brightness += 5;
+    Serial.print("Light: ");
+    Serial.println(led_color_brightness);
+  }
+
+  if (button_color.pressed()) {
+    update_leds = true;
+
+    led_color_index++;
+    if (led_color_index > 34) {
+      led_color_index = 0;
+    }
+    led_color = colors[led_color_index];
+    Serial.print("Color: ");
+    Serial.println(led_color);
+  }
+
   // check if one second is gone, we need to update the LEDs
   time_t time_current = rtc_get_time();
-  if (time_old != time_current) {
-    int a_button = analogRead(BUTTON_MODE_PIN);
-    if (a_button > 10) {
-      buttonMode = 1;
-    }
-    else {
-      buttonMode = 0;
-    }
-    leds_clock_clear();
+  if (time_old != time_current || update_leds == true) {
+    update_leds = false;
+
+    FastLED.clear();
     time_old = time_current;
     Serial.print("Time: ");
     Serial.println(time_current);
@@ -216,6 +210,7 @@ void loop() {
     write_time( 0,  4, hour(time_current));
     write_time(12, 18, minute(time_current));
     write_time(26, 32, second(time_current));
+
     // write LEDs....
     FastLED.show();
   }
