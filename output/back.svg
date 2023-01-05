@@ -43,7 +43,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -51,87 +51,59 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <circle
-       style="fill:none;stroke:#000002;stroke-width:0.0761549;stroke-linecap:square;stroke-opacity:0.931833;paint-order:fill markers stroke"
+    <path
        id="path837"
-       cx="83.206932"
-       cy="155.73177"
-       r="1.6" />
-    <circle
        style="fill:none;stroke:#000002;stroke-width:0.0761549;stroke-linecap:square;stroke-opacity:0.931833;paint-order:fill markers stroke"
+       d="m 84.806932,155.73177 a 1.6,1.6 0 0 1 -1.6,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6 1.6,1.6 0 0 1 1.6,1.6 z" />
+    <path
        id="path837-3"
-       cx="111.20693"
-       cy="155.73177"
-       r="1.6" />
-    <rect
-       style="fill:none;stroke:#000002;stroke-width:0.102114;stroke-linecap:square;stroke-opacity:0.931833;paint-order:fill markers stroke"
+       style="fill:none;stroke:#000002;stroke-width:0.0761549;stroke-linecap:square;stroke-opacity:0.931833;paint-order:fill markers stroke"
+       d="m 112.80693,155.73177 a 1.6,1.6 0 0 1 -1.6,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6 1.6,1.6 0 0 1 1.6,1.6 z" />
+    <path
        id="rect859"
-       width="20"
-       height="12"
-       x="87.206932"
-       y="149.73177" />
-    <circle
-       style="fill:none;stroke:#000000;stroke-width:0.1;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:fill markers stroke"
+       style="fill:none;stroke:#000002;stroke-width:0.102114;stroke-linecap:square;stroke-opacity:0.931833;paint-order:fill markers stroke"
+       d="m 87.206932,149.73177 h 19.999998 v 12 H 87.206932 Z" />
+    <path
        id="path837-6"
-       cx="59.206936"
-       cy="134.23177"
-       r="1.6" />
-    <circle
        style="fill:none;stroke:#000000;stroke-width:0.1;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:fill markers stroke"
+       d="m 60.806936,134.23177 a 1.6,1.6 0 0 1 -1.6,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6 1.6,1.6 0 0 1 1.6,1.6 z" />
+    <path
        id="path837-3-7"
-       cx="80.206917"
-       cy="134.23177"
-       r="1.6" />
-    <circle
-       style="fill:none;stroke:#000000;stroke-width:0.105454;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:fill markers stroke"
+       style="fill:none;stroke:#000000;stroke-width:0.1;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:fill markers stroke"
+       d="m 81.806917,134.23177 a 1.6,1.6 0 0 1 -1.6,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6 1.6,1.6 0 0 1 1.6,1.6 z" />
+    <path
        id="path861"
-       cx="69.706932"
-       cy="134.23177"
-       r="2.9000001" />
-    <circle
-       style="fill:none;stroke:#000000;stroke-width:0.066198;stroke-linecap:square;paint-order:fill markers stroke"
+       style="fill:none;stroke:#000000;stroke-width:0.105454;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:fill markers stroke"
+       d="m 72.606932,134.23177 a 2.9000001,2.9000001 0 0 1 -2.9,2.9 2.9000001,2.9000001 0 0 1 -2.9,-2.9 2.9000001,2.9000001 0 0 1 2.9,-2.9 2.9000001,2.9000001 0 0 1 2.9,2.9 z" />
+    <path
        id="path2897-3-9"
-       cx="43.206932"
-       cy="163.2317"
-       r="1.6" />
-    <circle
        style="fill:none;stroke:#000000;stroke-width:0.066198;stroke-linecap:square;paint-order:fill markers stroke"
+       d="m 44.806932,163.2317 a 1.6,1.6 0 0 1 -1.6,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6 1.6,1.6 0 0 1 1.6,1.6 z" />
+    <path
        id="path2897-4-9-6"
-       cx="151.20692"
-       cy="163.2317"
-       r="1.6" />
-    <circle
        style="fill:none;stroke:#000000;stroke-width:0.066198;stroke-linecap:square;paint-order:fill markers stroke"
+       d="m 152.80692,163.2317 a 1.6,1.6 0 0 1 -1.6,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6 1.6,1.6 0 0 1 1.6,1.6 z" />
+    <path
        id="path2897-4-4-4-2"
-       cx="151.20692"
-       cy="37.23177"
-       r="1.6" />
-    <circle
        style="fill:none;stroke:#000000;stroke-width:0.066198;stroke-linecap:square;paint-order:fill markers stroke"
+       d="m 152.80692,37.23177 a 1.6,1.6 0 0 1 -1.6,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6 1.6,1.6 0 0 1 1.6,1.6 z" />
+    <path
        id="path2897-4-8-0-6"
-       cx="43.206932"
-       cy="37.23177"
-       r="1.6" />
-    <rect
-       style="fill:none;stroke:#000000;stroke-width:0.21892;stroke-linecap:square;paint-order:fill markers stroke"
+       style="fill:none;stroke:#000000;stroke-width:0.066198;stroke-linecap:square;paint-order:fill markers stroke"
+       d="m 44.806932,37.23177 a 1.6,1.6 0 0 1 -1.6,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6 1.6,1.6 0 0 1 1.6,1.6 z" />
+    <path
        id="rect2166-2-5-9"
-       width="140"
-       height="140"
-       x="27.206917"
-       y="30.231768" />
-    <circle
-       style="fill:none;stroke:#0000ff;stroke-width:0.0360294;stroke-linecap:square;paint-order:fill markers stroke"
+       style="fill:none;stroke:#000000;stroke-width:0.21892;stroke-linecap:square;paint-order:fill markers stroke"
+       d="M 27.206917,30.231768 H 167.20692 V 170.23177 H 27.206917 Z" />
+    <path
        id="path1283-6-1"
-       cx="99.105164"
-       cy="8.6388741"
-       r="1.6"
-       transform="rotate(45)" />
-    <circle
        style="fill:none;stroke:#0000ff;stroke-width:0.0360294;stroke-linecap:square;paint-order:fill markers stroke"
+       transform="rotate(45)"
+       d="m 100.70516,8.6388741 a 1.6,1.6 0 0 1 -1.599996,1.5999999 1.6,1.6 0 0 1 -1.6,-1.5999999 1.6,1.6 0 0 1 1.6,-1.6000001 1.6,1.6 0 0 1 1.599996,1.6000001 z" />
+    <path
        id="path1283-6-5-6"
-       cx="99.105164"
-       cy="-4.3611259"
-       r="1.6"
-       transform="rotate(45)" />
+       style="fill:none;stroke:#0000ff;stroke-width:0.0360294;stroke-linecap:square;paint-order:fill markers stroke"
+       transform="rotate(45)"
+       d="m 100.70516,-4.3611259 a 1.6,1.6 0 0 1 -1.599996,1.6 1.6,1.6 0 0 1 -1.6,-1.6 1.6,1.6 0 0 1 1.6,-1.6000001 1.6,1.6 0 0 1 1.599996,1.6000001 z" />
   </g>
 </svg>
